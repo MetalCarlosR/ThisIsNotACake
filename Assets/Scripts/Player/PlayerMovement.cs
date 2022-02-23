@@ -39,7 +39,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jump")]
     public KeyCode m_JumpKeyCode = KeyCode.Space;
     float m_VerticalSpeed = 0.0f;
-    bool m_OnGround = false;
     [SerializeField]
     float m_JumpForçe;
     [SerializeField]

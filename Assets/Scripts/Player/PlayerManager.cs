@@ -6,8 +6,8 @@ public class PlayerManager : MonoBehaviour
 {
     [Header ("Go to table")]
     public static PlayerManager instance;
-    Vector3 _originalPos;
-    Quaternion _originalRot;
+    Vector3 _tablePos;
+    Quaternion _tableRot;
 
     public GameObject Player;
     public GameObject CutSpot;
@@ -34,8 +34,8 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        _originalPos = CutSpot.transform.position;
-        _originalRot = CutSpot.transform.rotation;
+        _tablePos = CutSpot.transform.position;
+        _tableRot = CutSpot.transform.rotation;
     }
 
 
@@ -43,17 +43,26 @@ public class PlayerManager : MonoBehaviour
     {
         CutSpot.transform.position = PlayerCamera.transform.position;
         CutSpot.transform.rotation = PlayerCamera.transform.rotation;
-       
-        Player.SetActive(false);
+
+        PlayerCamera.SetActive(false);
+        Player.GetComponent<PlayerMovement>().enabled = false;
         CutSpotCamera.SetActive(true);
 
-        StartCoroutine(MoveCamera());
+        StartCoroutine(MoveCameraToTable());
     }
 
-    IEnumerator MoveCamera()
+    public void GoToPlayer()
     {
-        Vector3 _startPos = CutSpot.transform.position;
-        Quaternion _startRot = CutSpot.transform.rotation;
+        CameraMovementCut.enabled = false;
+
+        StartCoroutine(MoveCameraToPlayer());
+
+    }
+
+    IEnumerator MoveCameraToTable()
+    {
+        //Vector3 _startPos = CutSpot.transform.position;
+        //Quaternion _startRot = CutSpot.transform.rotation;
 
         float elapsedTime = 0;
 
@@ -61,8 +70,8 @@ public class PlayerManager : MonoBehaviour
         {
             float ratio = elapsedTime / CameraAnimationTime;
 
-            Vector3 posLerp = Vector3.Lerp(CutSpot.transform.position, _originalPos, ratio);
-            Quaternion rotLerp = Quaternion.Lerp(CutSpot.transform.rotation, _originalRot, ratio);
+            Vector3 posLerp = Vector3.Lerp(CutSpot.transform.position, _tablePos, ratio);
+            Quaternion rotLerp = Quaternion.Lerp(CutSpot.transform.rotation, _tableRot, ratio);
 
             CutSpot.transform.SetPositionAndRotation(posLerp, rotLerp);
 
@@ -71,7 +80,31 @@ public class PlayerManager : MonoBehaviour
             yield return null;
         }
 
-        //CutSpot.transform.SetPositionAndRotation(_originalPos, _originalRot);
+        CutSpot.transform.SetPositionAndRotation(_tablePos, _tableRot);
         CameraMovementCut.enabled = true;
+    }
+
+    IEnumerator MoveCameraToPlayer()
+    {
+        float elapsedTime = 0;
+
+        while (elapsedTime <= CameraAnimationTime)
+        {
+            float ratio = elapsedTime / CameraAnimationTime;
+
+            Vector3 posLerp = Vector3.Lerp(CutSpot.transform.position, Player.transform.position, ratio);
+            Quaternion rotLerp = Quaternion.Lerp(CutSpot.transform.rotation, Player.transform.rotation, ratio);
+
+            CutSpot.transform.SetPositionAndRotation(posLerp, rotLerp);
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+
+        CutSpot.transform.SetPositionAndRotation(Player.transform.position, Player.transform.rotation);
+        PlayerCamera.SetActive(true);
+        Player.GetComponent<PlayerMovement>().enabled = true;
+        CutSpotCamera.SetActive(false);
     }
 }
