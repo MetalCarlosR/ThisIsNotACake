@@ -6,6 +6,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public CuttingManager cuttingManager;
+
+    public PlayerManager playerManager;
+
     [SerializeField] private LayerMask cakeLayer;
 
     void Awake()

@@ -11,15 +11,14 @@ public class PlayerInteract : MonoBehaviour
     public GameObject m_Knife;
     public Camera m_PlayerCamera;
 
-    private GameObject _lastHighlightedObject = null;
+    private GameObject _lastHighlightedCake = null;
     private Color _lastColor = Color.white;
     [SerializeField] private Color highlightColor;
 
     float m_CurrentAttachObjectTime;
     public float m_AttachObjectTime = 1f;
-    
-    
-    
+
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
@@ -37,8 +36,15 @@ public class PlayerInteract : MonoBehaviour
             PickUp();
         }
 
+        if (Input.GetMouseButtonDown(0) && _lastHighlightedCake)
+        {
+            GameManager.instance.cuttingManager.NewCake(_lastHighlightedCake);
+            ResetHighlight();
+        }
+
+        
         UpdateAttachedObject();
-        HighLightObjects();
+        HighLightCake();
     }
 
 
@@ -60,27 +66,30 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
-    private void HighLightObjects()
+    private void HighLightCake()
     {
         Ray l_Ray = m_PlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 
         if (Physics.Raycast(l_Ray, out RaycastHit hit, 20f))
         {
             GameObject g = hit.collider.gameObject;
-            if(g.layer != GameManager.instance.CakeLayer() || g == _lastHighlightedObject)
+            if (g.layer != GameManager.instance.CakeLayer() || g == _lastHighlightedCake)
                 return;
-            if(_lastHighlightedObject)
-                _lastHighlightedObject.GetComponent<Renderer>().material.color = _lastColor;
-            _lastHighlightedObject = g;
-            Renderer r = _lastHighlightedObject.GetComponent<Renderer>();
+            if (_lastHighlightedCake)
+                ResetHighlight();
+            _lastHighlightedCake = g;
+            Renderer r = _lastHighlightedCake.GetComponent<Renderer>();
             _lastColor = r.material.color;
             r.material.color = highlightColor;
         }
-        else if(_lastHighlightedObject)
-        {
-            _lastHighlightedObject.GetComponent<Renderer>().material.color = _lastColor;
-            _lastHighlightedObject = null;
-        }
+        else if (_lastHighlightedCake)
+            ResetHighlight();
+    }
+
+    private void ResetHighlight()
+    {
+        _lastHighlightedCake.GetComponent<Renderer>().material.color = _lastColor;
+        _lastHighlightedCake = null;
     }
 
     void StartPickUpObject(GameObject AttachObject, string tag)

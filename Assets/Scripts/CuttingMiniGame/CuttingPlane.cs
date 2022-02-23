@@ -5,11 +5,25 @@ using UnityEngine;
 
 public class CuttingPlane : MonoBehaviour
 {
+    [SerializeField] private Collider cuttingBoard;
+    private float centerPos, maxPos, minPos;
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        centerPos = transform.position.z;
+        float halfExtents = cuttingBoard.bounds.extents.z;
+        maxPos = centerPos + halfExtents;
+        minPos = centerPos - halfExtents;
+    }
+    
     void Update()
     {
         float dir = Input.GetAxis("Mouse X");
         transform.Translate(Vector3.up * -dir * 0.5f);
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(transform.position.z > maxPos || transform.position.z < minPos)
+            transform.Translate(Vector3.up * dir * 0.5f);
+        if(Input.GetMouseButtonDown(0))
             Cut();
     }
     
@@ -30,7 +44,7 @@ public class CuttingPlane : MonoBehaviour
                 GameObject top = hull.CreateUpperHull(cut.gameObject,null);
                 SetupHull(bot);
                 SetupHull(top);
-                CuttingManager.instance.CheckAndEraseCake(cut.gameObject);
+                GameManager.instance.cuttingManager.CheckAndEraseCake(cut.gameObject);
             }
         }
     }

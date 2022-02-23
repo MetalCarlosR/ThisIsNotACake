@@ -4,29 +4,14 @@ using UnityEngine;
 
 public class CuttingManager : MonoBehaviour
 {
-    public static CuttingManager instance;
-    [SerializeField] private LayerMask _cakeLayer;
     private GameObject _currentCake = null;
     private List<CuttingObjective> _objectives = new List<CuttingObjective>();
+
 
     struct CuttingObjective
     {
         private float rotation;
         private float position;
-    }
-
-    void Awake()
-    {
-        if (instance)
-            Destroy(this);
-        else
-            instance = this;
-    }
-    
-    void Start()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     void Update()
@@ -48,15 +33,12 @@ public class CuttingManager : MonoBehaviour
         _currentCake.transform.Rotate(transform.up,rotDir);
     }
 
-    private void NewCake()
+    public void NewCake(GameObject cake)
     {
-        if (_currentCake)
+        if (_currentCake || cake.layer != GameManager.instance.CakeLayer())
             return;
-        _currentCake = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        _currentCake = cake;
         _currentCake.transform.position = transform.position;
-        _currentCake.layer = (int) Mathf.Log(_cakeLayer.value, 2);
-        
-        
     }
 
     public void CheckAndEraseCake(GameObject cakeCut)
