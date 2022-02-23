@@ -31,9 +31,7 @@ public class CuttingManager : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F))
-            NewCake();
-        else if (Input.GetKey(KeyCode.Q))
+        if (Input.GetKey(KeyCode.Q))
             RotateCake(true);
         else if (Input.GetKey(KeyCode.E))
             RotateCake(false);

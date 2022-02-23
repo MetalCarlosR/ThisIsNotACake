@@ -11,16 +11,15 @@ public class PlayerInteract : MonoBehaviour
     public GameObject m_Knife;
     public Camera m_PlayerCamera;
 
+    private GameObject _lastHighlightedObject = null;
+    private Color _lastColor = Color.white;
+    [SerializeField] private Color highlightColor;
+
     float m_CurrentAttachObjectTime;
     public float m_AttachObjectTime = 1f;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+    
+    
+    
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
@@ -39,15 +38,16 @@ public class PlayerInteract : MonoBehaviour
         }
 
         UpdateAttachedObject();
+        HighLightObjects();
     }
 
 
-    public void PickUp()
+    private void PickUp()
     {
         Ray l_Ray = m_PlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
         RaycastHit l_RaycastHit;
 
-        Debug.Log("entra en la función");
+        Debug.Log("entra en la funciï¿½n");
 
         if (Physics.Raycast(l_Ray, out l_RaycastHit, 20f))
         {
@@ -57,7 +57,29 @@ public class PlayerInteract : MonoBehaviour
             {
                 StartPickUpObject(l_RaycastHit.collider.gameObject, l_RaycastHit.collider.tag);
             }
+        }
+    }
 
+    private void HighLightObjects()
+    {
+        Ray l_Ray = m_PlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+
+        if (Physics.Raycast(l_Ray, out RaycastHit hit, 20f))
+        {
+            GameObject g = hit.collider.gameObject;
+            if(g.layer != GameManager.instance.CakeLayer() || g == _lastHighlightedObject)
+                return;
+            if(_lastHighlightedObject)
+                _lastHighlightedObject.GetComponent<Renderer>().material.color = _lastColor;
+            _lastHighlightedObject = g;
+            Renderer r = _lastHighlightedObject.GetComponent<Renderer>();
+            _lastColor = r.material.color;
+            r.material.color = highlightColor;
+        }
+        else if(_lastHighlightedObject)
+        {
+            _lastHighlightedObject.GetComponent<Renderer>().material.color = _lastColor;
+            _lastHighlightedObject = null;
         }
     }
 
@@ -80,7 +102,8 @@ public class PlayerInteract : MonoBehaviour
             float l_Pct = Mathf.Min(1.0f, m_CurrentAttachObjectTime / m_AttachObjectTime);
 
             m_Knife.transform.position = Vector3.Lerp(m_Knife.transform.position, m_KnifeSpotTransform.position, l_Pct);
-            m_Knife.transform.rotation = Quaternion.Lerp(m_Knife.transform.rotation, m_KnifeSpotTransform.rotation, l_Pct);
+            m_Knife.transform.rotation =
+                Quaternion.Lerp(m_Knife.transform.rotation, m_KnifeSpotTransform.rotation, l_Pct);
             if (l_Pct == 1f)
                 m_Knife.transform.SetParent(m_KnifeSpotTransform);
         }

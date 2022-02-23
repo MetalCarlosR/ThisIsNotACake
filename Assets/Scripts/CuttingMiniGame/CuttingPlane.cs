@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class CuttingPlane : MonoBehaviour
 {
-    
-    [SerializeField] private LayerMask _cutMask;
-    
     void Update()
     {
         float dir = Input.GetAxis("Mouse X");
@@ -20,7 +17,7 @@ public class CuttingPlane : MonoBehaviour
     public void Cut()
     {
         Collider[] cuts = Physics.OverlapBox(transform.position, new Vector3(10, 0.1f, 10),
-            transform.rotation, _cutMask);
+            transform.rotation, GameManager.instance.CakeMask());
         if(cuts.Length <= 0)
             return;
 
@@ -40,7 +37,7 @@ public class CuttingPlane : MonoBehaviour
 
     private void SetupHull(GameObject hull)
     {
-        hull.layer = (int) Mathf.Log(_cutMask.value, 2) ;
+        hull.layer = GameManager.instance.CakeLayer();
         Rigidbody rb = hull.AddComponent<Rigidbody>();
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         MeshCollider coll = hull.AddComponent<MeshCollider>();
