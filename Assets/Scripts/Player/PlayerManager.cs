@@ -51,17 +51,10 @@ public void GoToTable()
         Player.GetComponent<PlayerMovement>().enabled = false;
         CutSpotCamera.SetActive(true);
 
-        CutSpot.GetComponent<PlayerInteract>().m_Cake = null;
-
         StartCoroutine(MoveCameraToTable());
-/*
-        CutSpot.GetComponent<PlayerInteract>().m_Knife = Player.GetComponent<PlayerInteract>().m_Knife;
-        Player.GetComponent<PlayerInteract>().m_Knife.transform.SetParent(null);
-        Player.GetComponent<PlayerInteract>().m_Knife = null;
-        CutSpot.GetComponent<PlayerInteract>().m_Cake = Player.GetComponent<PlayerInteract>().m_Cake;
-        Player.GetComponent<PlayerInteract>().m_Cake.transform.SetParent(null);
-        Player.GetComponent<PlayerInteract>().m_Cake = null;
-*/
+
+        
+
 
     }
 
@@ -71,14 +64,6 @@ public void GoToTable()
 
 
         StartCoroutine(MoveCameraToPlayer());
-/*
-        Player.GetComponent<PlayerInteract>().m_Knife = CutSpot.GetComponent<PlayerInteract>().m_Knife;
-        CutSpot.GetComponent<PlayerInteract>().m_Knife.transform.SetParent(null);
-        CutSpot.GetComponent<PlayerInteract>().m_Knife = null;
-        Player.GetComponent<PlayerInteract>().m_Cake = CutSpot.GetComponent<PlayerInteract>().m_Cake;
-        CutSpot.GetComponent<PlayerInteract>().m_Cake.transform.SetParent(null);
-*/
-
 
     }
 
@@ -103,12 +88,23 @@ public void GoToTable()
             yield return null;
         }
 
+        if (Player.GetComponent<PlayerInteract>().m_Knife != null)
+        {
+            CutSpot.GetComponent<PlayerInteract>().m_Knife = Player.GetComponent<PlayerInteract>().m_Knife;
+            Player.GetComponent<PlayerInteract>().m_Knife.transform.SetParent(CutSpot.GetComponent<PlayerInteract>().m_CakesSpotTransform);
+            Player.GetComponent<PlayerInteract>().m_Knife = null;
+        }
         
-
+        if (Player.GetComponent<PlayerInteract>().m_Cake != null)
+        {
+            CutSpot.GetComponent<PlayerInteract>().m_Cake = Player.GetComponent<PlayerInteract>().m_Cake;
+            Player.GetComponent<PlayerInteract>().m_Cake.transform.SetParent(CutSpot.GetComponent<PlayerInteract>().m_CakesSpotTransform);
+            CutSpot.GetComponent<PlayerInteract>().m_Cake.transform.position = new Vector3(0, 0, 0);
+            Player.GetComponent<PlayerInteract>().m_Cake = null;
+        }
+        
         CutSpot.transform.SetPositionAndRotation(_tablePos, _tableRot);
         CameraMovementCut.enabled = true;
-
-
     }
 
     IEnumerator MoveCameraToPlayer()
@@ -128,9 +124,22 @@ public void GoToTable()
 
             yield return null;
         }
-        
-        
 
+        if (CutSpot.GetComponent<PlayerInteract>().m_Knife != null)
+        {
+            CutSpot.GetComponent<PlayerInteract>().m_Knife.transform.SetParent(null);
+            Player.GetComponent<PlayerInteract>().m_Knife = CutSpot.GetComponent<PlayerInteract>().m_Knife;
+            CutSpot.GetComponent<PlayerInteract>().m_Knife = null;
+        }
+        
+        if (CutSpot.GetComponent<PlayerInteract>().m_Cake != null)
+        {
+            Player.GetComponent<PlayerInteract>().m_Cake = CutSpot.GetComponent<PlayerInteract>().m_Cake;
+            CutSpot.GetComponent<PlayerInteract>().m_Cake.transform.SetParent(Player.GetComponent<PlayerInteract>().m_CakesSpotTransform);
+            Player.GetComponent<PlayerInteract>().m_Cake.transform.position = new Vector3(0, 0, 0);
+            CutSpot.GetComponent<PlayerInteract>().m_Cake = null;
+        }
+        
 
         CutSpot.transform.SetPositionAndRotation(Player.transform.position, Player.transform.rotation);
         PlayerCamera.SetActive(true);

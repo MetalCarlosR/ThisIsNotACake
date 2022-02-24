@@ -26,9 +26,9 @@ public class CuttingManager : MonoBehaviour
 
     void Start()
     {
-        GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        g.layer = GameManager.instance.CakeLayer();
-        NewCake(g);
+        //GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        //g.layer = GameManager.instance.CakeLayer();
+        //NewCake(g);
     }
     
     void Update()

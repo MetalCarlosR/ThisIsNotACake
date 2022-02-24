@@ -110,8 +110,6 @@ public class PlayerInteract : MonoBehaviour
 
         if (AttachObject.gameObject.layer == GameManager.instance.CakeLayer())
         {
-            Debug.Log("Tocado");
-
             if (m_Cake == null)
             {
                 m_Cake = AttachObject;
