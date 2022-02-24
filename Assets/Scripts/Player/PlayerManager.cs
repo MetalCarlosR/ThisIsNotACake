@@ -36,10 +36,13 @@ public class PlayerManager : MonoBehaviour
     {
         _tablePos = CutSpot.transform.position;
         _tableRot = CutSpot.transform.rotation;
-    }
+        Player.GetComponent<PlayerMovement>().enabled = false;
+        CutSpotCamera.SetActive(true);
+
+}
 
 
-    public void GoToTable()
+public void GoToTable()
     {
         CutSpot.transform.position = PlayerCamera.transform.position;
         CutSpot.transform.rotation = PlayerCamera.transform.rotation;
@@ -48,14 +51,34 @@ public class PlayerManager : MonoBehaviour
         Player.GetComponent<PlayerMovement>().enabled = false;
         CutSpotCamera.SetActive(true);
 
+        CutSpot.GetComponent<PlayerInteract>().m_Cake = null;
+
         StartCoroutine(MoveCameraToTable());
+/*
+        CutSpot.GetComponent<PlayerInteract>().m_Knife = Player.GetComponent<PlayerInteract>().m_Knife;
+        Player.GetComponent<PlayerInteract>().m_Knife.transform.SetParent(null);
+        Player.GetComponent<PlayerInteract>().m_Knife = null;
+        CutSpot.GetComponent<PlayerInteract>().m_Cake = Player.GetComponent<PlayerInteract>().m_Cake;
+        Player.GetComponent<PlayerInteract>().m_Cake.transform.SetParent(null);
+        Player.GetComponent<PlayerInteract>().m_Cake = null;
+*/
+
     }
 
     public void GoToPlayer()
     {
         CameraMovementCut.enabled = false;
 
+
         StartCoroutine(MoveCameraToPlayer());
+/*
+        Player.GetComponent<PlayerInteract>().m_Knife = CutSpot.GetComponent<PlayerInteract>().m_Knife;
+        CutSpot.GetComponent<PlayerInteract>().m_Knife.transform.SetParent(null);
+        CutSpot.GetComponent<PlayerInteract>().m_Knife = null;
+        Player.GetComponent<PlayerInteract>().m_Cake = CutSpot.GetComponent<PlayerInteract>().m_Cake;
+        CutSpot.GetComponent<PlayerInteract>().m_Cake.transform.SetParent(null);
+*/
+
 
     }
 
@@ -80,8 +103,12 @@ public class PlayerManager : MonoBehaviour
             yield return null;
         }
 
+        
+
         CutSpot.transform.SetPositionAndRotation(_tablePos, _tableRot);
         CameraMovementCut.enabled = true;
+
+
     }
 
     IEnumerator MoveCameraToPlayer()
@@ -101,10 +128,15 @@ public class PlayerManager : MonoBehaviour
 
             yield return null;
         }
+        
+        
+
 
         CutSpot.transform.SetPositionAndRotation(Player.transform.position, Player.transform.rotation);
         PlayerCamera.SetActive(true);
         Player.GetComponent<PlayerMovement>().enabled = true;
+        
+
         CutSpotCamera.SetActive(false);
     }
 }

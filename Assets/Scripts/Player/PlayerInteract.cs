@@ -8,7 +8,9 @@ public class PlayerInteract : MonoBehaviour
 
     //GrabObjects
     public Transform m_KnifeSpotTransform;
+    public Transform m_CakesSpotTransform;
     public GameObject m_Knife;
+    public GameObject m_Cake;
     public Camera m_PlayerCamera;
 
     private GameObject _lastHighlightedCake = null;
@@ -17,6 +19,9 @@ public class PlayerInteract : MonoBehaviour
 
     float m_CurrentAttachObjectTime;
     public float m_AttachObjectTime = 1f;
+
+    float m_CurrentAttachObjectTimeCake;
+    public float m_AttachObjectTimeCake = 1f;
 
 
     void Update()
@@ -53,13 +58,14 @@ public class PlayerInteract : MonoBehaviour
         Ray l_Ray = m_PlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
         RaycastHit l_RaycastHit;
 
-        Debug.Log("entra en la funci�n");
-
         if (Physics.Raycast(l_Ray, out l_RaycastHit, 20f))
         {
-            Debug.Log("Se lanza el rayo");
-
             if (l_RaycastHit.collider.tag == "Knife")
+            {
+                StartPickUpObject(l_RaycastHit.collider.gameObject, l_RaycastHit.collider.tag);
+            }
+
+            if (l_RaycastHit.collider.gameObject.layer == GameManager.instance.CakeLayer())
             {
                 StartPickUpObject(l_RaycastHit.collider.gameObject, l_RaycastHit.collider.tag);
             }
@@ -101,6 +107,16 @@ public class PlayerInteract : MonoBehaviour
                 m_Knife = AttachObject;
             }
         }
+
+        if (AttachObject.gameObject.layer == GameManager.instance.CakeLayer())
+        {
+            Debug.Log("Tocado");
+
+            if (m_Cake == null)
+            {
+                m_Cake = AttachObject;
+            }
+        }
     }
 
     void UpdateAttachedObject()
@@ -115,6 +131,18 @@ public class PlayerInteract : MonoBehaviour
                 Quaternion.Lerp(m_Knife.transform.rotation, m_KnifeSpotTransform.rotation, l_Pct);
             if (l_Pct == 1f)
                 m_Knife.transform.SetParent(m_KnifeSpotTransform);
+        }
+
+        if (m_Cake != null && m_CurrentAttachObjectTimeCake < m_AttachObjectTimeCake)
+        {
+            m_CurrentAttachObjectTimeCake += Time.deltaTime;
+            float l_Pct = Mathf.Min(1.0f, m_CurrentAttachObjectTimeCake / m_AttachObjectTimeCake);
+
+            m_Cake.transform.position = Vector3.Lerp(m_Cake.transform.position, m_CakesSpotTransform.position, l_Pct);
+            m_Cake.transform.rotation =
+                Quaternion.Lerp(m_Cake.transform.rotation, m_CakesSpotTransform.rotation, l_Pct);
+            if (l_Pct == 1f)
+                m_Cake.transform.SetParent(m_CakesSpotTransform);
         }
     }
 }
